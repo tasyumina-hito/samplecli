@@ -1,4 +1,6 @@
 use clap::Parser;
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 
 #[derive(Parser, Debug)]
 #[clap(
@@ -17,7 +19,21 @@ struct Opt {
 }
 
 fn main() {
-    let _opt = Opt::parse();
+    let opts: Opt = Opt::parse();
 
+    if let Some(path) = opts.formula_file {
+        let f = File::open(path).unwrap();
+        let reader = BufReader::new(f);
+        run(reader, opts.verbose);
 
+    }else {
+        println!("No file is specified");
+    }
+}
+
+fn run(reader: BufReader<File>, verbose: bool) {
+    for line in reader.lines() {
+        let line = line.unwrap();
+        println!("{}", line);
+    }
 }
